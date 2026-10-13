@@ -1,0 +1,25 @@
+[gd_scene format=4 uid="uid://cpc3j2fy17hd"]
+
+[ext_resource type="PackedScene" uid="uid://cfk3jubr8nsjp" path="res://scenes/game_hud/game_hud.tscn" id="1_myc1q"]
+[ext_resource type="Texture2D" uid="uid://duvcjqegvc1li" path="res://assets/backgrounds/free-cartoon-forest-game-backgrounds/PNG/Cartoon_Forest_BG_04/Cartoon_Forest_BG_04.png" id="1_u6jkd"]
+[ext_resource type="TileSet" uid="uid://8tlhkvtjjfqo" path="res://Resources/tiles.tres" id="3_3tlib"]
+[ext_resource type="PackedScene" uid="uid://b5gn6fgycf8of" path="res://scenes/player/player.tscn" id="4_ncu3c"]
+
+[node name="LevelBase" type="Node" unique_id=967511087]
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1998855332]
+self_modulate = Color(0.40832946, 0.40832946, 0.40832946, 1)
+position = Vector2(631, 299.00003)
+scale = Vector2(0.75, 0.75)
+texture = ExtResource("1_u6jkd")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=527123956]
+
+[node name="GameHud" parent="CanvasLayer" unique_id=1709282964 instance=ExtResource("1_myc1q")]
+
+[node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=1685625433]
+tile_map_data = PackedByteArray("AAACACAAAAACAAEAAAADACAAAAACAAEAAAAEACAAAAACAAEAAAAFACAAAAACAAEAAAAGACAAAAACAAEAAAAHACAAAAACAAEAAAAIACAAAAACAAEAAAAJACAAAAACAAEAAAAKACAAAAACAAEAAAALACAAAAADAAEAAAAOACAAAAACAAEAAAAPACAAAAACAAEAAAAQACAAAAACAAEAAAARACAAAAACAAEAAAASACAAAAACAAEAAAATACAAAAACAAEAAAAUACAAAAACAAEAAAAXACAAAAACAAcAAAAXAB8AAAACAAYAAAAXAB4AAAACAAEAAAAWACAAAAABAAcAAAAWAB8AAAABAAYAAAAWAB4AAAABAAEAAAAYACAAAAADAAcAAAAYAB8AAAADAAYAAAAYAB4AAAADAAEAAAAcAB0AAAADAAcAAAAcABwAAAADAAEAAAAbAB0AAAACAAcAAAAbABwAAAACAAEAAAAaAB0AAAABAAcAAAAaABwAAAABAAEAAAAgABsAAAADAAcAAAAgABoAAAADAAEAAAAfABsAAAACAAcAAAAfABoAAAACAAEAAAAeABsAAAABAAcAAAAeABoAAAABAAEAAAAGAB4AAAACAAAAAAAFAB4AAAACAAAAAAAEAB4AAAADAAAAAAADAB4AAAABAAAAAAAEABwAAAACAAAAAAADABwAAAABAAAAAAAUABwAAAAOAAYAAAATABwAAAANAAYAAAASABwAAAANAAYAAAARABwAAAANAAYAAAAQABwAAAANAAYAAAAPABwAAAANAAYAAAAOABwAAAANAAYAAAANABwAAAANAAUAAAANABsAAAAPAAUAAAANABoAAAAOAAQAAAAMABoAAAANAAYAAAALABoAAAANAAYAAAAKABoAAAANAAYAAAAJABoAAAAMAAYAAAA=")
+tile_set = ExtResource("3_3tlib")
+
+[node name="Player" parent="." unique_id=60684871 instance=ExtResource("4_ncu3c")]
+position = Vector2(171, 552)
