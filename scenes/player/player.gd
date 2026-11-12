@@ -5,18 +5,27 @@ extends CharacterBody2D
 @onready var land_sound: AudioStreamPlayer = $LandSound
 @onready var sprite_2d: Sprite2D = $Sprite2D
 @onready var player_came: Camera2D = $PlayerCame
+@onready var hurt_timer: Timer = $HurtTimer
+@onready var hurt_sound: AudioStreamPlayer = $HurtSound
+
 
 @export var camera_left:int=-1000
 @export var camera_right:int=1000
 @export var camera_top:int=-1000
 @export var camera_bottom=1000
 
+const FLASH_COUNT: int=6
+const FLASH_DURATION: float=0.2
 const GRAVITY: float=690.0
 const RUN_SPEED: float=100.0
+const JUMP_FORCE: float=300.0
+const HURT_VELOCITY: Vector2= Vector2(0.0,-170.0)
+const STOMP_SPEED: float=-200.0
+
 var _jumped:bool=false
-var JUMP_FORCE: float=300.0
 var was_on_floar:bool=false
 var _start_position:Vector2
+var _is_hurt:bool=false
 var is_still:bool:
 	get:return is_zero_approx(velocity.x)
 
@@ -25,6 +34,14 @@ var is_ground:bool:
 
 var is_falling:bool:
 	get:return velocity.y>0
+
+var is_hurt:bool:
+	get:return _is_hurt
+
+var _is_invincible:bool = false
+var _invincible_tween:Tween
+var _damage_areas: Array[Area2D]
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	_start_position = position
@@ -64,6 +81,7 @@ func check_landed()->void:
 	was_on_floar = is_on_floor()
 
 func handle_movement()->void:
+	if _is_hurt:return
 	velocity.x=Input.get_axis("left", "right") * RUN_SPEED
 	
 	if is_on_floor() and _jumped==true:
@@ -75,3 +93,52 @@ func fell_off()->void:
 	position =_start_position
 	#set_deferred("position", _start_position)
 	set_position.call_deferred(_start_position)
+
+func apply_hurt_jump()->void:
+	if _is_hurt:return
+	_is_hurt=true
+	hurt_timer.start()
+	velocity=HURT_VELOCITY
+	hurt_sound.play()
+
+func go_invincible()->void:
+	if _is_invincible:return
+	_is_invincible = true
+	if _invincible_tween and _invincible_tween.is_running():
+		_invincible_tween.kill()
+	_invincible_tween = create_tween()
+	_invincible_tween.set_loops(FLASH_COUNT)
+	_invincible_tween.tween_property(sprite_2d,"modulate", Color.TRANSPARENT, FLASH_DURATION)
+	_invincible_tween.tween_property(sprite_2d,"modulate", Color.WHITE, FLASH_DURATION)
+	_invincible_tween.finished.connect(invincible_finish)
+
+func invincible_finish()->void:
+	_is_invincible=false
+	if _damage_areas.size()>0:
+		apply_hit.call_deferred()
+	
+func apply_hit()->void:
+	if _is_invincible: return
+	apply_hurt_jump()
+	go_invincible()
+
+func apply_stomp()->void:
+	velocity.y = STOMP_SPEED
+
+func _on_hit_area_area_entered(area: Area2D) -> void:
+	apply_hit.call_deferred()
+	if area not in _damage_areas:
+		_damage_areas.append(area)# Replace with function body.
+
+func _on_hit_area_area_exited(area: Area2D) -> void:
+	_damage_areas.erase(area) # Replace with function body.
+
+func _on_hurt_timer_timeout() -> void:
+	_is_hurt=false # Replace with function body.
+
+
+func _on_stomp_area_area_entered(area: Area2D) -> void:
+	if velocity.y<0.0 or _is_hurt: return
+	if area is StompBox and not area._is_hit:
+		apply_stomp.call_deferred()
+		area.trigger() # Replace with function body.
