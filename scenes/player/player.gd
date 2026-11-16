@@ -18,6 +18,7 @@ const FLASH_COUNT: int=6
 const FLASH_DURATION: float=0.2
 const GRAVITY: float=690.0
 const RUN_SPEED: float=100.0
+const MAX_FALL_SPEED: float=300.0
 const JUMP_FORCE: float=300.0
 const HURT_VELOCITY: Vector2= Vector2(0.0,-170.0)
 const STOMP_SPEED: float=-200.0
@@ -88,6 +89,8 @@ func handle_movement()->void:
 		velocity.y -= JUMP_FORCE
 		jump_sound.play()
 		_jumped=false
+	
+	velocity.y = minf(velocity.y, MAX_FALL_SPEED)
 
 func fell_off()->void:
 	position =_start_position
@@ -135,10 +138,15 @@ func _on_hit_area_area_exited(area: Area2D) -> void:
 
 func _on_hurt_timer_timeout() -> void:
 	_is_hurt=false # Replace with function body.
-
+ 
+func apply_bounce(bounce_speed:Vector2)->void:
+	velocity = bounce_speed
 
 func _on_stomp_area_area_entered(area: Area2D) -> void:
 	if velocity.y<0.0 or _is_hurt: return
 	if area is StompBox and not area._is_hit:
 		apply_stomp.call_deferred()
-		area.trigger() # Replace with function body.
+		area.trigger()
+	if area is Trampoline and not area.bouncing:
+		area.bounce()
+		apply_bounce.call_deferred(area.bounce_velocity) # Replace with function body.

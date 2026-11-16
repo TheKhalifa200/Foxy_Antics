@@ -269,9 +269,10 @@ volume_db = -16.124
 [node name="StompArea" type="Area2D" parent="." unique_id=2145990541]
 position = Vector2(0, 11)
 collision_layer = 0
-collision_mask = 16
+collision_mask = 48
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StompArea" unique_id=1920166156]
+position = Vector2(0, 1)
 shape = SubResource("RectangleShape2D_75vfm")
 
 [connection signal="area_entered" from="HitArea" to="." method="_on_hit_area_area_entered"]
